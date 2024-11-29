@@ -177,8 +177,27 @@ public class ExcelServiceImpl implements ExcelService {
     }
 
     private String formatDate(String dateTime) {
-        // 입력 날짜를 LocalDateTime으로 변환 후 yyyy-MM-dd 형식으로 포맷
-        return LocalDateTime.parse(dateTime.substring(0, 19)).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        if (dateTime == null || dateTime.isEmpty()) {
+            return null; // 날짜가 없을 경우 기본값 반환
+        }
+
+        // 지원할 날짜 형식 리스트
+        String[] patterns = {
+                "yyyy.MM.dd HH:mm",
+                "yyyy-MM-dd'T'HH:mm:ssXXX", // ISO 8601 형식
+                "yyyy-MM-dd HH:mm:ss",
+                "yyyy-MM-dd"
+        };
+        for (String pattern : patterns) {
+            try {
+                // 패턴에 맞는 날짜를 반환
+                return LocalDateTime.parse(dateTime, DateTimeFormatter.ofPattern(pattern)).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            } catch (Exception ignored) {
+                // 패턴이 맞지 않을 경우 무시하고 다음으로 진행
+            }
+        }
+        // 모든 패턴에 맞지 않는 경우 기본값 반환
+        return "유효하지 않은 날짜";
     }
 
 }
