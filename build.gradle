@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.4'
     id 'io.spring.dependency-management' version '1.1.6'
-    id 'org.asciidoctor.jvm.convert' version '3.3.2'
+    id 'com.google.cloud.tools.jib' version '3.4.3'
 }
 
 group = 'the_monitor'
@@ -24,16 +24,14 @@ repositories {
     mavenCentral()
 }
 
-ext {
-    set('snippetsDir', file("build/generated-snippets"))
-}
-
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation group: 'org.apache.poi', name: 'poi', version: '5.0.0'
+    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '5.0.0'
 
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -45,14 +43,56 @@ dependencies {
 
     implementation 'mysql:mysql-connector-java:8.0.33'
 
+    // jwt & json
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+    // gson
+    implementation 'com.google.code.gson:gson'
+
+    // json
+    implementation 'org.json:json:20230227'
+
+    // mail
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    // swagger
+    implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.2.0'
+
+    // Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    //s3
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+    implementation 'org.apache.poi:poi:5.0.0'
+    implementation 'org.apache.poi:poi-ooxml:5.0.0'
 }
 
 tasks.named('test') {
-    outputs.dir snippetsDir
     useJUnitPlatform()
 }
 
-tasks.named('asciidoctor') {
-    inputs.dir snippetsDir
-    dependsOn test
+bootJar {
+    archiveFileName = 'the_monitor-0.0.1.jar'
+}
+
+apply plugin: 'com.google.cloud.tools.jib'
+
+jib {
+    from {
+        image = 'openjdk:21-jdk-slim'
+    }
+    to {
+        image = "${System.getenv('DOCKER_USERNAME')}/the_monitor:latest"
+        auth {
+            username = "${System.getenv('DOCKER_USERNAME')}"
+            password = "${System.getenv('DOCKER_PASSWORD')}"
+        }
+    }
+    container {
+        ports = ['8080']
+        mainClass = 'the_monitor.TheMonitorApplication'
+    }
 }

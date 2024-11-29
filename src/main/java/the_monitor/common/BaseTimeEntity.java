@@ -1,5 +1,6 @@
 package the_monitor.common;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
@@ -17,10 +18,16 @@ public class BaseTimeEntity {
 
     @CreatedDate
     @Column(name = "created_at", nullable = false)
+    @JsonFormat(pattern = "yyyy.MM.dd")
     private LocalDateTime createdAt;
 
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false)
+    @JsonFormat(pattern = "yyyy.MM.dd")
     private LocalDateTime updatedAt;
+
+    public void setUpdatedAt() {
+        this.updatedAt = LocalDateTime.now();
+    }
 
 }

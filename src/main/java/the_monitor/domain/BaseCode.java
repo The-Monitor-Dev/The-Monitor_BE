@@ -1,6 +1,6 @@
 package the_monitor.domain;
 
-import the_monitor.application.ReasonDto;
+import the_monitor.application.dto.ReasonDto;
 
 public interface BaseCode {
 

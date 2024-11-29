@@ -3,7 +3,7 @@ package the_monitor.common;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
-import the_monitor.application.ReasonDto;
+import the_monitor.application.dto.ReasonDto;
 import the_monitor.domain.BaseCode;
 
 @Getter

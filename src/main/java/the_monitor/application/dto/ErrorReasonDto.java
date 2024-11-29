@@ -1,4 +1,4 @@
-package the_monitor.application;
+package the_monitor.application.dto;
 
 import lombok.Builder;
 import lombok.Getter;

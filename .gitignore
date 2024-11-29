@@ -38,4 +38,9 @@ out/
 
 ### aplication
 # Ignore all application.yml files
+application.yml
 application-*.yml
+application.properties
+
+### ignore .env file
+.env
